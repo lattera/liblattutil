@@ -28,10 +28,19 @@
 #include <stdbool.h>
 #include <sys/queue.h>
 #include <sys/stat.h>
+#include <stdarg.h>
 
 #include <ucl.h>
 
+struct _lllog;
+
 #define	EXPORTED_SYM	__attribute__((visibility("default")))
+
+#define LATTUTIL_LOG_VERBOSITY_DEFAULT	1000
+#define LATTUTIL_LOG_DEFAULT_NAME	"lattutil"
+
+typedef ssize_t (*log_cb)(struct _lllog *, int, const char *, ...);
+typedef void (*log_close)(struct _lllog *);
 
 /*
  * Though we export the underlying data structure, using the API is
@@ -44,6 +53,13 @@ typedef struct _llconfig {
 	struct ucl_parser	*l_parser;
 	const ucl_object_t	*l_rootobj;
 } lattutil_config_path_t;
+
+typedef struct _lllog {
+	int		 ll_verbosity;
+	char		*ll_path;
+	log_cb		 ll_log_info;
+	log_close	 ll_log_close;
+} lattutil_log_t;
 
 /**
  * Find a configuration file in a set of given paths
@@ -110,5 +126,39 @@ char *lattutil_find_config_string(const ucl_object_t *, const char *,
  * @return The value if found, default value if not
  */
 int64_t find_config_int(const ucl_object_t *, const char *, int64_t);
+
+/**
+ * Initialize logger
+ *
+ * @param Path
+ * @param Verbosity
+ * @return Pointer to the logging object
+ */
+lattutil_log_t *lattutil_log_init(char *, int);
+
+/**
+ * Free logger
+ *
+ * The underlying variable is set to NULL.
+ *
+ * @param Double pointer to the logging object
+ */
+void lattutil_log_free(lattutil_log_t **);
+
+/**
+ * Initialize syslog-based logging
+ *
+ * @param Logging object
+ * @param syslog(3) logopt
+ * @param syslog(3) facility
+ * @return True on success, False otherwise
+ */
+bool lattutil_log_syslog_init(lattutil_log_t *, int, int);
+
+#ifdef _lattutil_internal
+ssize_t lattutil_log_syslog_info(lattutil_log_t *, int,
+    const char *, ...);
+void lattutil_log_syslog_close(lattutil_log_t *);
+#endif /* _lattutil_internal */
 
 #endif /* !_LIBLATTUTIL_H */
