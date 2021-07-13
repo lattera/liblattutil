@@ -57,7 +57,11 @@ typedef struct _llconfig {
 typedef struct _lllog {
 	int		 ll_verbosity;
 	char		*ll_path;
+
+	log_cb		 ll_log_err;
 	log_cb		 ll_log_info;
+	log_cb		 ll_log_warn;
+
 	log_close	 ll_log_close;
 } lattutil_log_t;
 
@@ -156,7 +160,11 @@ void lattutil_log_free(lattutil_log_t **);
 bool lattutil_log_syslog_init(lattutil_log_t *, int, int);
 
 #ifdef _lattutil_internal
+ssize_t lattutil_log_syslog_err(lattutil_log_t *, int,
+    const char *, ...);
 ssize_t lattutil_log_syslog_info(lattutil_log_t *, int,
+    const char *, ...);
+ssize_t lattutil_log_syslog_warn(lattutil_log_t *, int,
     const char *, ...);
 void lattutil_log_syslog_close(lattutil_log_t *);
 #endif /* _lattutil_internal */

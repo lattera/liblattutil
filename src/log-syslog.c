@@ -32,6 +32,31 @@
 #include "liblattutil.h"
 
 ssize_t
+lattutil_log_syslog_err(lattutil_log_t *logp, int verbose,
+    const char *fmt, ...)
+{
+	va_list args;
+	size_t len;
+	char *msg;
+
+	va_start(args, fmt);
+	if (verbose == -1  || verbose >= logp->ll_verbosity) {
+		msg = NULL;
+		vasprintf(&msg, fmt, args);
+		if (msg == NULL) {
+			len = -1;
+			goto end;
+		}
+		len = strlen(msg);
+		syslog(LOG_ERR, "ERROR: %s", msg);
+	}
+	va_end(args);
+
+end:
+	return (len);
+}
+
+ssize_t
 lattutil_log_syslog_info(lattutil_log_t *logp, int verbose,
     const char *fmt, ...)
 {
@@ -40,17 +65,40 @@ lattutil_log_syslog_info(lattutil_log_t *logp, int verbose,
 	char *msg;
 
 	va_start(args, fmt);
-	printf("Hey there!\n");
 	if (verbose == -1  || verbose >= logp->ll_verbosity) {
 		msg = NULL;
 		vasprintf(&msg, fmt, args);
-		printf("Attempting to log: %s\n", msg);
 		if (msg == NULL) {
 			len = -1;
 			goto end;
 		}
 		len = strlen(msg);
-		syslog(LOG_INFO, "%s", msg);
+		syslog(LOG_INFO, "INFO: %s", msg);
+	}
+	va_end(args);
+
+end:
+	return (len);
+}
+
+ssize_t
+lattutil_log_syslog_warn(lattutil_log_t *logp, int verbose,
+    const char *fmt, ...)
+{
+	va_list args;
+	size_t len;
+	char *msg;
+
+	va_start(args, fmt);
+	if (verbose == -1  || verbose >= logp->ll_verbosity) {
+		msg = NULL;
+		vasprintf(&msg, fmt, args);
+		if (msg == NULL) {
+			len = -1;
+			goto end;
+		}
+		len = strlen(msg);
+		syslog(LOG_WARNING, "WARNING: %s", msg);
 	}
 	va_end(args);
 

@@ -82,8 +82,10 @@ lattutil_log_syslog_init(lattutil_log_t *logp, int logopt, int facility)
 {
 	const char *name;
 
-	logp->ll_log_info = lattutil_log_syslog_info;
 	logp->ll_log_close = lattutil_log_syslog_close;
+	logp->ll_log_err = lattutil_log_syslog_err;
+	logp->ll_log_info = lattutil_log_syslog_info;
+	logp->ll_log_warn = lattutil_log_syslog_warn;
 
 	name = logp->ll_path;
 	if (name == NULL) {
@@ -93,7 +95,6 @@ lattutil_log_syslog_init(lattutil_log_t *logp, int logopt, int facility)
 		}
 	}
 
-	printf("Opening log %s\n", name);
 	openlog(name, logopt, facility);
 
 	return (true);
