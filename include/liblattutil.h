@@ -184,6 +184,13 @@ bool lattutil_log_ready(lattutil_log_t *);
  */
 int lattutil_log_verbosity(lattutil_log_t *);
 
+/**
+ * Set the minimum verbosity level
+ *
+ * @param Logging object
+ * @param Verbosity level
+ * @return The previous verbosity level
+ */
 int lattutil_log_set_verbosity(lattutil_log_t *, int);
 
 #ifdef _lattutil_internal
