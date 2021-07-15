@@ -27,104 +27,46 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <syslog.h>
-
 #include "liblattutil.h"
 
 EXPORTED_SYM
-lattutil_log_t *
-lattutil_log_init(char *path, int verbosity)
-{
-	lattutil_log_t *res;
-
-	res = calloc(1, sizeof(*res));
-	if (res == NULL) {
-		return (NULL);
-	}
-
-	res->ll_verbosity = (verbosity == -1) ? LATTUTIL_LOG_VERBOSITY_DEFAULT :
-	    verbosity;
-	if (path != NULL) {
-		res->ll_path = strdup(path);
-		if (res->ll_path == NULL) {
-			free(res);
-			return (NULL);
-		}
-	}
-
-	lattutil_log_dummy_init(res);
-
-	return (res);
-}
-
-EXPORTED_SYM
 void
-lattutil_log_free(lattutil_log_t **logp)
+lattutil_log_dummy_init(lattutil_log_t *res)
 {
-	lattutil_log_t *logp2;
 
-	if (logp == NULL || *logp == NULL) {
-		return;
-	}
-
-	logp2 = *logp;
-
-	if (logp2->ll_log_close != NULL) {
-		logp2->ll_log_close(logp2);
-	}
-
-	free(logp2->ll_path);
-	memset(logp2, 0, sizeof(*logp2));
-	*logp = NULL;
+	res->ll_log_close = lattutil_log_dummy_close;
+	res->ll_log_err = lattutil_log_dummy_err;
+	res->ll_log_info = lattutil_log_dummy_info;
+	res->ll_log_warn = lattutil_log_dummy_warn;
 }
 
-EXPORTED_SYM
-bool
-lattutil_log_ready(lattutil_log_t *logp)
+ssize_t
+lattutil_log_dummy_err(lattutil_log_t *logp, int verbose,
+    const char *fmt, ...)
 {
 
-	if (logp == NULL) {
-		return (false);
-	}
-
-	if (logp->ll_log_err == NULL ||
-	    logp->ll_log_info == NULL ||
-	    logp->ll_log_warn == NULL) {
-		return (false);
-	}
-
-	return (true);
+	return (0);
 }
 
-EXPORTED_SYM
-int
-lattutil_log_verbosity(lattutil_log_t *logp)
+ssize_t
+lattutil_log_dummy_info(lattutil_log_t *logp, int verbose,
+    const char *fmt, ...)
 {
 
-	if (logp == NULL) {
-		return (-1);
-	}
-
-	return (logp->ll_verbosity);
+	return (0);
 }
 
-EXPORTED_SYM
-int
-lattutil_log_set_verbosity(lattutil_log_t *logp, int verbosity)
+ssize_t
+lattutil_log_dummy_warn(lattutil_log_t *logp, int verbose,
+    const char *fmt, ...)
 {
-	int old;
 
-	if (logp == NULL) {
-		return (-1);
-	}
+	return (0);
+}
 
-	old = logp->ll_verbosity;
+void
+lattutil_log_dummy_close(lattutil_log_t *logp)
+{
 
-	if (verbosity == -1) {
-		verbosity = LATTUTIL_LOG_VERBOSITY_DEFAULT;
-	}
-
-	logp->ll_verbosity = verbosity;
-
-	return (old);
+	return;
 }

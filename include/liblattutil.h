@@ -159,6 +159,33 @@ void lattutil_log_free(lattutil_log_t **);
  */
 bool lattutil_log_syslog_init(lattutil_log_t *, int, int);
 
+/**
+ * Initialize NULL logging
+ *
+ * This is the default logger. It simply discards all logging
+ * messages.
+ *
+ * @param Logging object
+ */
+void lattutil_log_dummy_init(lattutil_log_t *);
+
+/**
+ * Determine if the logging subsystem is ready to receive messages
+ *
+ * @param Pointer to the logging object
+ */
+bool lattutil_log_ready(lattutil_log_t *);
+
+/**
+ * Get the configured minimum verbosity level
+ *
+ * @param Logging object
+ * @return Verbosity level
+ */
+int lattutil_log_verbosity(lattutil_log_t *);
+
+int lattutil_log_set_verbosity(lattutil_log_t *, int);
+
 #ifdef _lattutil_internal
 ssize_t lattutil_log_syslog_err(lattutil_log_t *, int,
     const char *, ...);
@@ -167,6 +194,14 @@ ssize_t lattutil_log_syslog_info(lattutil_log_t *, int,
 ssize_t lattutil_log_syslog_warn(lattutil_log_t *, int,
     const char *, ...);
 void lattutil_log_syslog_close(lattutil_log_t *);
+
+ssize_t lattutil_log_dummy_err(lattutil_log_t *, int,
+    const char *, ...);
+ssize_t lattutil_log_dummy_info(lattutil_log_t *, int,
+    const char *, ...);
+ssize_t lattutil_log_dummy_warn(lattutil_log_t *, int,
+    const char *, ...);
+void lattutil_log_dummy_close(lattutil_log_t *);
 #endif /* _lattutil_internal */
 
 #endif /* !_LIBLATTUTIL_H */

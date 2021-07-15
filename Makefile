@@ -3,6 +3,7 @@ SHLIB_MAJOR=	0
 INCS=		liblattutil.h
 
 SRCS+=		config.c
+SRCS+=		log-dummy.c
 SRCS+=		log-main.c
 SRCS+=		log-syslog.c
 
