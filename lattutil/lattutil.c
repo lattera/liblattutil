@@ -129,6 +129,19 @@ main(int argc, char *argv[])
 	printf("JSON blob:\n%s\n",
 	    ucl_object_emit(query->lsq_result.lsr_rows, UCL_EMIT_JSON));
 
+	cur = lattutil_sqlite_get_row(query, 0);
+	if (cur == NULL) {
+		printf("Could not get the row\n");
+		return (1);
+	}
+	cur = lattutil_sqlite_get_column(cur, 0);
+	if (cur == NULL) {
+		printf("Could not get the column\n");
+		return (1);
+	}
+
+	printf("row 0 col 0: %s\n", ucl_object_tostring(cur));
+
 	lattutil_sqlite_query_free(&query);
 	lattutil_log_free(&logp);
 
