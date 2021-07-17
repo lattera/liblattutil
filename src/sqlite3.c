@@ -105,7 +105,6 @@ lattutil_sqlite_prepare(lattutil_sqlite_ctx_t *ctx, const char *query_string)
 	int res;
 
 	if (ctx == NULL || query_string == NULL) {
-		printf("Nope\n");
 		return (NULL);
 	}
 
@@ -124,7 +123,6 @@ lattutil_sqlite_prepare(lattutil_sqlite_ctx_t *ctx, const char *query_string)
 
 	query->lsq_result.lsr_rows = ucl_object_typed_new(UCL_ARRAY);
 	if (query->lsq_result.lsr_rows == NULL) {
-		printf("creating rows object failed\n");
 		free(query->lsq_querystr);
 		free(query);
 		return (NULL);
@@ -133,7 +131,6 @@ lattutil_sqlite_prepare(lattutil_sqlite_ctx_t *ctx, const char *query_string)
 	res = sqlite3_prepare(ctx->lsq_sqlctx, query_string, -1,
 	    &(query->lsq_stmt), NULL);
 	if (res != SQLITE_OK || query->lsq_stmt == NULL) {
-		printf("sqlite3 returned with: %d\n", res);
 		free(query);
 		return (NULL);
 	}
@@ -336,7 +333,6 @@ _lattutil_sqlite_add_row(lattutil_sqlite_query_t *query)
 			break;
 		case SQLITE_TEXT:
 			sval = (const char *)sqlite3_column_text(query->lsq_stmt, i);
-			printf("Adding %s\n", sval);
 			colobj = ucl_object_fromstring(sval);
 			break;
 		case SQLITE_NULL:
