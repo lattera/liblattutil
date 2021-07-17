@@ -284,6 +284,53 @@ end:
 	return (ret);
 }
 
+EXPORTED_SYM
+const ucl_object_t *
+lattutil_sqlite_get_row(lattutil_sqlite_query_t *query, size_t rowid)
+{
+	const ucl_object_t *obj;
+	ucl_object_iter_t it;
+	size_t i;
+
+	if (query == NULL) {
+		return (NULL);
+	}
+
+	it = NULL;
+	i = 0;
+	while ((obj = ucl_iterate_object(query->lsq_result.lsr_rows, &it,
+	    true))) {
+		if (i++ == rowid) {
+			return (obj);
+		}
+	}
+
+	return (NULL);
+}
+
+EXPORTED_SYM
+const ucl_object_t *
+lattutil_sqlite_get_column(const ucl_object_t *row, size_t colid)
+{
+	const ucl_object_t *obj;
+	ucl_object_iter_t it;
+	size_t i;
+
+	if (row == NULL) {
+		return (NULL);
+	}
+
+	it = NULL;
+	i = 0;
+	while ((obj = ucl_iterate_object(row, &it, true))) {
+		if (i++ == colid) {
+			return (obj);
+		}
+	}
+
+	return (NULL);
+}
+
 static bool
 _lattutil_sqlite_add_row(lattutil_sqlite_query_t *query)
 {

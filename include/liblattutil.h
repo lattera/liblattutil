@@ -311,6 +311,24 @@ bool lattutil_sqlite_bind_time(lattutil_sqlite_query_t *, int, time_t);
  */
 bool lattutil_sqlite_exec(lattutil_sqlite_query_t *);
 
+/**
+ * Look up a row in the query result
+ *
+ * @param The query object
+ * @param The integer row ID
+ * @return UCL object of the row
+ */
+const ucl_object_t *lattutil_sqlite_get_row(lattutil_sqlite_query_t *, size_t);
+
+/**
+ * Look up a column in a row object
+ *
+ * @param The UCL object containing the row
+ * @param The integer column ID
+ * @return UCL object of the column
+ */
+const ucl_object_t *lattutil_sqlite_get_column(const ucl_object_t *, size_t);
+
 #ifdef _lattutil_internal
 ssize_t lattutil_log_syslog_err(lattutil_log_t *, int,
     const char *, ...);
