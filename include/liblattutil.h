@@ -30,9 +30,12 @@
 #include <sys/stat.h>
 #include <stdarg.h>
 
+#include <sqlite3.h>
 #include <ucl.h>
 
 struct _lllog;
+struct _sqlite_ctx;
+typedef struct _sqlite_ctx sqlite_ctx_t;
 
 #define	EXPORTED_SYM	__attribute__((visibility("default")))
 
@@ -64,6 +67,27 @@ typedef struct _lllog {
 
 	log_close	 ll_log_close;
 } lattutil_log_t;
+
+typedef struct _lattutil_sql_ctx {
+	sqlite3		*lsq_sqlctx;
+	char		*lsq_path;
+	uint64_t	 lsq_flags;
+	lattutil_log_t	*lsq_logger;
+} lattutil_sqlite_ctx_t;
+
+typedef struct _lattutil_sql_res {
+	char			**lsr_column_names;
+	ucl_object_t		*lsr_rows;
+	size_t			 lsr_ncolumns;
+} lattutil_sql_res_t;
+
+typedef struct _lattutil_sqlite_query {
+	lattutil_sqlite_ctx_t	*lsq_sql_ctx;
+	sqlite3_stmt		*lsq_stmt;
+	char			*lsq_querystr;
+	lattutil_sql_res_t	 lsq_result;
+	bool			 lsq_executed;
+} lattutil_sqlite_query_t;
 
 /**
  * Find a configuration file in a set of given paths
@@ -192,6 +216,100 @@ int lattutil_log_verbosity(lattutil_log_t *);
  * @return The previous verbosity level
  */
 int lattutil_log_set_verbosity(lattutil_log_t *, int);
+
+/**
+ * Create new SQLite3 context object
+ *
+ * @param Path to the database file
+ * @param Optional logger (NULL means no logging)
+ * @param flags (0)
+ * @return lattutil SQLite3 context object
+ */
+lattutil_sqlite_ctx_t *lattutil_sqlite_ctx_new(const char *, lattutil_log_t *,
+    uint64_t);
+
+/**
+ * Free The SQLite3 context object
+ *
+ * @param Double pointer to the context object
+ */
+void lattutil_sqlite_ctx_free(lattutil_sqlite_ctx_t **);
+
+/**
+ * Prepare a new query
+ *
+ * @param The lattutil SQLite3 context object
+ * @param The query
+ */
+lattutil_sqlite_query_t *lattutil_sqlite_prepare(lattutil_sqlite_ctx_t *,
+    const char *);
+
+/**
+ * Free a query object
+ *
+ * @param Double pointer to the query object
+ */
+void lattutil_sqlite_query_free(lattutil_sqlite_query_t **);
+
+/**
+ * Get the embedded result object in the query
+ *
+ * @param The query object
+ * @return The query's result object
+ */
+lattutil_sql_res_t *lattutil_sqlite_get_result(lattutil_sqlite_query_t *);
+
+/**
+ * Bind an integer value to the query
+ *
+ * @param The query object
+ * @param The query param number
+ * @param The integer to be bound
+ * @return Whether the param bound successfully
+ */
+bool lattutil_sqlite_bind_int(lattutil_sqlite_query_t *, int, int);
+
+/**
+ * Bind a string value to the query
+ *
+ * @param The query object
+ * @param The query param number
+ * @param The string to be bound
+ * @return Whether the param bound successfully
+ */
+bool lattutil_sqlite_bind_string(lattutil_sqlite_query_t *, int, const char *);
+
+/**
+ * Bind a blob value to the query
+ *
+ * @param The query object
+ * @param The query param number
+ * @param The blob to be bound
+ * @param The size of the blob
+ * @return Whether the param bound successfully
+ */
+bool lattutil_sqlite_bind_blob(lattutil_sqlite_query_t *, int, void *, size_t);
+
+/**
+ * Bind a time_t value to the query
+ *
+ * Note that this is not 64-bit time safe. That will change soon.
+ *
+ * @param The query object
+ * @param The query param number
+ * @param The time_t to be bound
+ * @return Whether the param bound successfully
+ *
+ */
+bool lattutil_sqlite_bind_time(lattutil_sqlite_query_t *, int, time_t);
+
+/**
+ * Execute the query
+ *
+ * @param The query to be executed
+ * @return Whether the query executed successfully
+ */
+bool lattutil_sqlite_exec(lattutil_sqlite_query_t *);
 
 #ifdef _lattutil_internal
 ssize_t lattutil_log_syslog_err(lattutil_log_t *, int,
