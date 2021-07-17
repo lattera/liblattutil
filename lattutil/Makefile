@@ -10,6 +10,6 @@ CFLAGS+=	-I/usr/local/include
 LDFLAGS+=	-L${.CURDIR}/../obj
 LDFLAGS+=	-L/usr/local/lib
 
-LDADD+=		-llattutil
+LDADD+=		-llattutil -lucl
 
 .include <bsd.prog.mk>
