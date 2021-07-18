@@ -345,6 +345,42 @@ lattutil_sqlite_get_column(const ucl_object_t *row, size_t colid)
 	return (NULL);
 }
 
+EXPORTED_SYM
+const char *
+lattutil_sqlite_get_column_string(const ucl_object_t *row, size_t colid)
+{
+	const ucl_object_t *obj;
+
+	if (row == NULL) {
+		return (NULL);
+	}
+
+	obj = lattutil_sqlite_get_column(row, colid);
+	if (obj != NULL) {
+		return (ucl_object_tostring(obj));
+	}
+
+	return (NULL);
+}
+
+EXPORTED_SYM
+int64_t
+lattutil_sqlite_get_column_int(const ucl_object_t *row, size_t colid, int64_t def)
+{
+	const ucl_object_t *obj;
+
+	if (row == NULL) {
+		return (def);
+	}
+
+	obj = lattutil_sqlite_get_column(row, colid);
+	if (obj != NULL) {
+		return (ucl_object_toint(obj));
+	}
+
+	return (def);
+}
+
 static bool
 _lattutil_sqlite_add_row(lattutil_sqlite_query_t *query)
 {

@@ -359,6 +359,26 @@ const ucl_object_t *lattutil_sqlite_get_row(lattutil_sqlite_query_t *, size_t);
  */
 const ucl_object_t *lattutil_sqlite_get_column(const ucl_object_t *, size_t);
 
+/**
+ * Return a column as a string
+ *
+ * @param The UCL object containing the row
+ * @param The integer column ID
+ * @return The string value of the column
+ */
+const char *lattutil_sqlite_get_column_string(const ucl_object_t *, size_t);
+
+/**
+ * Return a column as a 64-bit signed integer
+ *
+ * @param The UCL object containing the row
+ * @param The integer column ID
+ * @param The default value if the column cannot be found or converted
+ *        to int64_t
+ * @return The integer value of the column or the default value
+ */
+int64_t lattutil_sqlite_get_column_int(const ucl_object_t *, size_t, int64_t);
+
 #ifdef _lattutil_internal
 ssize_t lattutil_log_syslog_debug(lattutil_log_t *, int,
     const char *, ...);
