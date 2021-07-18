@@ -267,7 +267,7 @@ lattutil_sql_res_t *lattutil_sqlite_get_result(lattutil_sqlite_query_t *);
  * @param The integer to be bound
  * @return Whether the param bound successfully
  */
-bool lattutil_sqlite_bind_int(lattutil_sqlite_query_t *, int, int);
+bool lattutil_sqlite_bind_int(lattutil_sqlite_query_t *, int, int64_t);
 
 /**
  * Bind a string value to the query

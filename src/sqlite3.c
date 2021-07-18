@@ -183,14 +183,14 @@ lattutil_sqlite_get_result(lattutil_sqlite_query_t *query)
 EXPORTED_SYM
 bool
 lattutil_sqlite_bind_int(lattutil_sqlite_query_t *query, int paramno,
-    int val)
+    int64_t val)
 {
 
 	if (query == NULL) {
 		return (false);
 	}
 
-	return (sqlite3_bind_int(query->lsq_stmt, paramno, val) ==
+	return (sqlite3_bind_int64(query->lsq_stmt, paramno, val) ==
 	    SQLITE_OK);
 }
 
@@ -232,7 +232,7 @@ lattutil_sqlite_bind_time(lattutil_sqlite_query_t *query, int paramno,
 		return (NULL);
 	}
 
-	return (sqlite3_bind_int(query->lsq_stmt, paramno, val) ==
+	return (sqlite3_bind_int64(query->lsq_stmt, paramno, val) ==
 	    SQLITE_OK);
 }
 
@@ -335,10 +335,11 @@ static bool
 _lattutil_sqlite_add_row(lattutil_sqlite_query_t *query)
 {
 	ucl_object_t *colobj, *rowobj;
+	size_t blobsz, i, ncols;
 	lattutil_log_t *logger;
 	const char *sval;
 	int *ival, res;
-	size_t i, ncols;
+	void *pval;
 	bool ret;
 
 	if (query == NULL) {
@@ -375,12 +376,23 @@ _lattutil_sqlite_add_row(lattutil_sqlite_query_t *query)
 	for (i = 0; i < ncols; i++) {
 		switch (sqlite3_column_type(query->lsq_stmt, i)) {
 		case SQLITE_INTEGER:
-			colobj = ucl_object_fromint((int64_t)
-			    sqlite3_column_int(query->lsq_stmt, i));
+			colobj = ucl_object_fromint(
+			    sqlite3_column_int64(query->lsq_stmt, i));
 			break;
 		case SQLITE_TEXT:
-			sval = (const char *)sqlite3_column_text(query->lsq_stmt, i);
+			sval = (const char *)sqlite3_column_text(
+			    query->lsq_stmt, i);
 			colobj = ucl_object_fromstring(sval);
+			break;
+		case SQLITE_BLOB:
+			blobsz = sqlite3_column_bytes(query->lsq_stmt, i);
+			if (blobsz > 0) {
+				colobj = ucl_object_fromlstring(
+				    sqlite3_column_blob(query->lsq_stmt, i),
+				    blobsz);
+			} else {
+				colobj = ucl_object_typed_new(UCL_NULL);
+			}
 			break;
 		case SQLITE_NULL:
 			colobj = ucl_object_typed_new(UCL_NULL);
