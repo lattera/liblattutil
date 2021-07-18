@@ -5,6 +5,7 @@ INCS=		liblattutil.h
 SRCS+=		config.c
 SRCS+=		log-dummy.c
 SRCS+=		log-main.c
+SRCS+=		log-stdio.c
 SRCS+=		log-syslog.c
 SRCS+=		sqlite3.c
 

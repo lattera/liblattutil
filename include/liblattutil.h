@@ -216,6 +216,14 @@ bool lattutil_log_syslog_init(lattutil_log_t *, int, int);
 void lattutil_log_dummy_init(lattutil_log_t *);
 
 /**
+ * Initialize stdio-based logging
+ *
+ * @param Logging object
+ * @return True on success, False otherwise
+ */
+bool lattutil_log_stdio_init(lattutil_log_t *);
+
+/**
  * Determine if the logging subsystem is ready to receive messages
  *
  * @param Pointer to the logging object
@@ -399,6 +407,16 @@ ssize_t lattutil_log_dummy_info(lattutil_log_t *, int,
 ssize_t lattutil_log_dummy_warn(lattutil_log_t *, int,
     const char *, ...);
 void lattutil_log_dummy_close(lattutil_log_t *);
+
+ssize_t lattutil_log_stdio_debug(lattutil_log_t *, int,
+    const char *, ...);
+ssize_t lattutil_log_stdio_err(lattutil_log_t *, int,
+    const char *, ...);
+ssize_t lattutil_log_stdio_info(lattutil_log_t *, int,
+    const char *, ...);
+ssize_t lattutil_log_stdio_warn(lattutil_log_t *, int,
+    const char *, ...);
+void lattutil_log_stdio_close(lattutil_log_t *);
 #endif /* _lattutil_internal */
 
 #endif /* !_LIBLATTUTIL_H */
