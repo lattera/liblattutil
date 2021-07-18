@@ -74,6 +74,7 @@ lattutil_log_syslog_debug(lattutil_log_t *logp, int verbose,
 		}
 		len = strlen(msg);
 		syslog(LOG_DEBUG, "DEBUG: %s", msg);
+		free(msg);
 	}
 	va_end(args);
 
@@ -99,6 +100,7 @@ lattutil_log_syslog_err(lattutil_log_t *logp, int verbose,
 		}
 		len = strlen(msg);
 		syslog(LOG_ERR, "ERROR: %s", msg);
+		free(msg);
 	}
 	va_end(args);
 
@@ -124,6 +126,7 @@ lattutil_log_syslog_info(lattutil_log_t *logp, int verbose,
 		}
 		len = strlen(msg);
 		syslog(LOG_INFO, "INFO: %s", msg);
+		free(msg);
 	}
 	va_end(args);
 
@@ -149,6 +152,7 @@ lattutil_log_syslog_warn(lattutil_log_t *logp, int verbose,
 		}
 		len = strlen(msg);
 		syslog(LOG_WARNING, "WARNING: %s", msg);
+		free(msg);
 	}
 	va_end(args);
 
