@@ -29,11 +29,14 @@
 
 #include <syslog.h>
 
+#include <limits.h>
+
 #include "liblattutil.h"
 
 int
 main(int argc, char *argv[])
 {
+	const char *blobval = "BLOB Value";
 	lattutil_sqlite_query_t *query;
 	const ucl_object_t *cur, *tmp;
 	lattutil_sqlite_ctx_t *sqlctx;
@@ -56,7 +59,9 @@ main(int argc, char *argv[])
 	query = lattutil_sqlite_prepare(sqlctx,
 	    "CREATE TABLE IF NOT EXISTS test_table ("
 	    "    colname TEXT NOT NULL, "
-	    "    colval TEXT NOT NULL"
+	    "    colval TEXT NOT NULL,"
+	    "    colblob BLOB,"
+	    "    colint INTEGER"
 	    ")");
 
 	if (query == NULL) {
@@ -72,7 +77,7 @@ main(int argc, char *argv[])
 	lattutil_sqlite_query_free(&query);
 
 	query = lattutil_sqlite_prepare(sqlctx,
-	    "INSERT INTO test_table (colname, colval) VALUES (?, ?)");
+	    "INSERT INTO test_table (colname, colval, colint, colblob) VALUES (?, ?, ?, ?)");
 	if (query == NULL) {
 		logp->ll_log_err(logp, -1, "Unable to create second query");
 		return (1);
@@ -85,6 +90,16 @@ main(int argc, char *argv[])
 
 	if (!lattutil_sqlite_bind_string(query, 2, "testval")) {
 		logp->ll_log_err(logp, -1, "Unable to bind colval");
+		return (1);
+	}
+
+	if (!lattutil_sqlite_bind_int(query, 3, INT_MAX+1)) {
+		logp->ll_log_err(logp, -1, "Unable to bind colint");
+		return (1);
+	}
+
+	if (!lattutil_sqlite_bind_blob(query, 4, (void *)blobval, sizeof(blobval))) {
+		logp->ll_log_err(logp, -1, "Unable to bind colblob");
 		return (1);
 	}
 
