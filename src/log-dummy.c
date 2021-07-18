@@ -35,9 +35,18 @@ lattutil_log_dummy_init(lattutil_log_t *res)
 {
 
 	res->ll_log_close = lattutil_log_dummy_close;
+	res->ll_log_debug = lattutil_log_dummy_debug;
 	res->ll_log_err = lattutil_log_dummy_err;
 	res->ll_log_info = lattutil_log_dummy_info;
 	res->ll_log_warn = lattutil_log_dummy_warn;
+}
+
+ssize_t
+lattutil_log_dummy_debug(lattutil_log_t *logp, int verbose,
+    const char *fmt, ...)
+{
+
+	return (0);
 }
 
 ssize_t

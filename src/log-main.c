@@ -87,7 +87,8 @@ lattutil_log_ready(lattutil_log_t *logp)
 		return (false);
 	}
 
-	if (logp->ll_log_err == NULL ||
+	if (logp->ll_log_debug == NULL ||
+	    logp->ll_log_err == NULL ||
 	    logp->ll_log_info == NULL ||
 	    logp->ll_log_warn == NULL) {
 		return (false);

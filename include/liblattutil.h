@@ -61,6 +61,7 @@ typedef struct _lllog {
 	int		 ll_verbosity;
 	char		*ll_path;
 
+	log_cb		 ll_log_debug;
 	log_cb		 ll_log_err;
 	log_cb		 ll_log_info;
 	log_cb		 ll_log_warn;
@@ -330,6 +331,8 @@ const ucl_object_t *lattutil_sqlite_get_row(lattutil_sqlite_query_t *, size_t);
 const ucl_object_t *lattutil_sqlite_get_column(const ucl_object_t *, size_t);
 
 #ifdef _lattutil_internal
+ssize_t lattutil_log_syslog_debug(lattutil_log_t *, int,
+    const char *, ...);
 ssize_t lattutil_log_syslog_err(lattutil_log_t *, int,
     const char *, ...);
 ssize_t lattutil_log_syslog_info(lattutil_log_t *, int,
@@ -338,6 +341,8 @@ ssize_t lattutil_log_syslog_warn(lattutil_log_t *, int,
     const char *, ...);
 void lattutil_log_syslog_close(lattutil_log_t *);
 
+ssize_t lattutil_log_dummy_debug(lattutil_log_t *, int,
+    const char *, ...);
 ssize_t lattutil_log_dummy_err(lattutil_log_t *, int,
     const char *, ...);
 ssize_t lattutil_log_dummy_info(lattutil_log_t *, int,

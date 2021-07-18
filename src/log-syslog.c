@@ -38,6 +38,7 @@ lattutil_log_syslog_init(lattutil_log_t *logp, int logopt, int facility)
 	const char *name;
 
 	logp->ll_log_close = lattutil_log_syslog_close;
+	logp->ll_log_debug = lattutil_log_syslog_debug;
 	logp->ll_log_err = lattutil_log_syslog_err;
 	logp->ll_log_info = lattutil_log_syslog_info;
 	logp->ll_log_warn = lattutil_log_syslog_warn;
@@ -53,6 +54,31 @@ lattutil_log_syslog_init(lattutil_log_t *logp, int logopt, int facility)
 	openlog(name, logopt, facility);
 
 	return (true);
+}
+
+ssize_t
+lattutil_log_syslog_debug(lattutil_log_t *logp, int verbose,
+    const char *fmt, ...)
+{
+	va_list args;
+	size_t len;
+	char *msg;
+
+	va_start(args, fmt);
+	if (verbose == -1  || verbose >= logp->ll_verbosity) {
+		msg = NULL;
+		vasprintf(&msg, fmt, args);
+		if (msg == NULL) {
+			len = -1;
+			goto end;
+		}
+		len = strlen(msg);
+		syslog(LOG_DEBUG, "DEBUG: %s", msg);
+	}
+	va_end(args);
+
+end:
+	return (len);
 }
 
 ssize_t
