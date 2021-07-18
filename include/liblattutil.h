@@ -33,6 +33,8 @@
 #include <sqlite3.h>
 #include <ucl.h>
 
+#define LATTUTIL_VERSION	1
+
 struct _lllog;
 struct _sqlite_ctx;
 typedef struct _sqlite_ctx sqlite_ctx_t;
@@ -50,6 +52,7 @@ typedef void (*log_close)(struct _lllog *);
  * preferred over directly accessing the ABI.
  */
 typedef struct _llconfig {
+	uint64_t		 l_version;
 	struct stat		 l_sb;
 	char			*l_path;
 	int			 l_fd;
@@ -58,6 +61,7 @@ typedef struct _llconfig {
 } lattutil_config_path_t;
 
 typedef struct _lllog {
+	uint64_t	 ll_version;
 	int		 ll_verbosity;
 	char		*ll_path;
 
@@ -70,6 +74,7 @@ typedef struct _lllog {
 } lattutil_log_t;
 
 typedef struct _lattutil_sql_ctx {
+	uint64_t	 lsq_version;
 	sqlite3		*lsq_sqlctx;
 	char		*lsq_path;
 	uint64_t	 lsq_flags;

@@ -53,6 +53,8 @@ lattutil_sqlite_ctx_new(const char *path, lattutil_log_t *logger,
 		return (NULL);
 	}
 
+	ctx->lsq_version = LATTUTIL_VERSION;
+
 	ctx->lsq_path = strdup(path);
 	if (ctx->lsq_path == NULL) {
 		free(ctx);

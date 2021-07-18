@@ -45,6 +45,8 @@ lattutil_find_config(const char **paths, size_t npaths,
 		return (NULL);
 	}
 
+	res->l_version = LATTUTIL_VERSION;
+
 	res->l_fd = -1;
 	for (i = 0; i < npaths; i++) {
 		sz = strlen(paths[i]) + strlen(filename) + 3;

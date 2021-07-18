@@ -42,6 +42,8 @@ lattutil_log_init(char *path, int verbosity)
 		return (NULL);
 	}
 
+	res->ll_version = LATTUTIL_VERSION;
+
 	res->ll_verbosity = (verbosity == -1) ? LATTUTIL_LOG_VERBOSITY_DEFAULT :
 	    verbosity;
 	if (path != NULL) {
