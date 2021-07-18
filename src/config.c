@@ -124,6 +124,18 @@ lattutil_free_config_path(lattutil_config_path_t **obj)
 }
 
 EXPORTED_SYM
+uint64_t
+lattutil_config_get_version(lattutil_config_path_t *obj)
+{
+
+	if (obj == NULL) {
+		return (0);
+	}
+
+	return (obj->l_version);
+}
+
+EXPORTED_SYM
 char *
 lattutil_config_path_path(lattutil_config_path_t *path)
 {

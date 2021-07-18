@@ -95,6 +95,18 @@ lattutil_sqlite_ctx_free(lattutil_sqlite_ctx_t **ctx)
 }
 
 EXPORTED_SYM
+uint64_t
+lattutil_sqlite_get_version(lattutil_sqlite_ctx_t *ctx)
+{
+
+	if (ctx == NULL) {
+		return (0);
+	}
+
+	return (ctx->lsq_version);
+}
+
+EXPORTED_SYM
 lattutil_sqlite_query_t *
 lattutil_sqlite_prepare(lattutil_sqlite_ctx_t *ctx, const char *query_string)
 {

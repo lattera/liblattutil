@@ -124,6 +124,14 @@ lattutil_config_path_t *lattutil_find_config(const char **, size_t, const char *
 void lattutil_free_config_path(lattutil_config_path_t **);
 
 /**
+ * Get the ABI version of the config path object
+ *
+ * @param The config path object
+ * @return The version number
+ */
+uint64_t lattutil_config_get_version(lattutil_config_path_t *);
+
+/**
  * Return the fully-qualified path of the config file
  *
  * @param A pointer to the lattutil_config_path_t object
@@ -180,6 +188,14 @@ lattutil_log_t *lattutil_log_init(char *, int);
 void lattutil_log_free(lattutil_log_t **);
 
 /**
+ * Get the ABI version number of the log object
+ *
+ * @param The log object
+ * @return The ABI version number
+ */
+uint64_t lattutil_log_get_version(lattutil_log_t *);
+
+/**
  * Initialize syslog-based logging
  *
  * @param Logging object
@@ -233,6 +249,14 @@ int lattutil_log_set_verbosity(lattutil_log_t *, int);
  */
 lattutil_sqlite_ctx_t *lattutil_sqlite_ctx_new(const char *, lattutil_log_t *,
     uint64_t);
+
+/**
+ * Get the ABI version number of the sqlite wrapper
+ *
+ * @param The lattutil sqlite context object
+ * @return The ABI version number
+ */
+uint64_t lattutil_sqlite_get_version(lattutil_sqlite_ctx_t *);
 
 /**
  * Free The SQLite3 context object

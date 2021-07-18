@@ -81,6 +81,18 @@ lattutil_log_free(lattutil_log_t **logp)
 }
 
 EXPORTED_SYM
+uint64_t
+lattutil_log_get_version(lattutil_log_t *logp)
+{
+
+	if (logp == NULL) {
+		return (0);
+	}
+
+	return (logp->ll_version);
+}
+
+EXPORTED_SYM
 bool
 lattutil_log_ready(lattutil_log_t *logp)
 {
