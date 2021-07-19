@@ -68,6 +68,8 @@ typedef struct _lllog {
 	char		*ll_path;
 	void		*ll_aux;
 	size_t		 ll_auxsz;
+	void		*ll_internalaux;
+	size_t		 ll_internalauxsz;
 
 	log_cb		 ll_log_debug;
 	log_cb		 ll_log_err;
@@ -85,6 +87,8 @@ typedef struct _lattutil_sql_ctx {
 	lattutil_log_t	*lsq_logger;
 	void		*lsq_aux;
 	size_t		 lsq_auxsz;
+	void		*lsq_internalaux;
+	size_t		 lsq_internalauxsz;
 } lattutil_sqlite_ctx_t;
 
 typedef struct _lattutil_sql_res {
