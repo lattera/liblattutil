@@ -13,6 +13,7 @@ The logging API supports the following backends:
 
 * Dummy
 * Syslog
+* stdio
 
 The dummy backend simply discards any messages passed to it. The
 syslog backend sends messages to syslog, if the message meets or
