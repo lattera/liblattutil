@@ -60,7 +60,7 @@ lattutil_log_stdio_debug(lattutil_log_t *logp, int verbose,
 			goto end;
 		}
 		len = strlen(msg);
-		fprintf(stderr, "DEBUG: %s", msg);
+		fprintf(stderr, "DEBUG: %s\n", msg);
 		free(msg);
 	}
 	va_end(args);
@@ -86,7 +86,7 @@ lattutil_log_stdio_err(lattutil_log_t *logp, int verbose,
 			goto end;
 		}
 		len = strlen(msg);
-		fprintf(stderr, "ERROR: %s", msg);
+		fprintf(stderr, "ERROR: %s\n", msg);
 		free(msg);
 	}
 	va_end(args);
@@ -112,7 +112,7 @@ lattutil_log_stdio_info(lattutil_log_t *logp, int verbose,
 			goto end;
 		}
 		len = strlen(msg);
-		fprintf(stdout, "INFO: %s", msg);
+		fprintf(stdout, "INFO: %s\n", msg);
 		free(msg);
 	}
 	va_end(args);
@@ -138,7 +138,7 @@ lattutil_log_stdio_warn(lattutil_log_t *logp, int verbose,
 			goto end;
 		}
 		len = strlen(msg);
-		fprintf(stderr, "WARNING: %s", msg);
+		fprintf(stderr, "WARNING: %s\n", msg);
 		free(msg);
 	}
 	va_end(args);
