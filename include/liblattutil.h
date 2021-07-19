@@ -95,6 +95,10 @@ typedef struct _lattutil_sqlite_query {
 	bool			 lsq_executed;
 } lattutil_sqlite_query_t;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Find a configuration file in a set of given paths
  *
@@ -418,5 +422,9 @@ ssize_t lattutil_log_stdio_warn(lattutil_log_t *, int,
     const char *, ...);
 void lattutil_log_stdio_close(lattutil_log_t *);
 #endif /* _lattutil_internal */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* !_LIBLATTUTIL_H */
