@@ -95,6 +95,35 @@ lattutil_sqlite_ctx_free(lattutil_sqlite_ctx_t **ctx)
 }
 
 EXPORTED_SYM
+void
+lattutil_sqlite_ctx_set_aux(lattutil_sqlite_ctx_t *ctx, void *aux, size_t sz)
+{
+
+	if (ctx == NULL) {
+		return;
+	}
+
+	ctx->lsq_aux = aux;
+	ctx->lsq_auxsz = sz;
+}
+
+EXPORTED_SYM
+void *
+lattutil_sqlite_ctx_get_aux(lattutil_sqlite_ctx_t *ctx, size_t *sz)
+{
+
+	if (ctx == NULL) {
+		return (NULL);
+	}
+
+	if (sz != NULL) {
+		*sz = ctx->lsq_auxsz;
+	}
+
+	return (ctx->lsq_aux);
+}
+
+EXPORTED_SYM
 uint64_t
 lattutil_sqlite_get_version(lattutil_sqlite_ctx_t *ctx)
 {

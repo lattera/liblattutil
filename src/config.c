@@ -124,6 +124,35 @@ lattutil_free_config_path(lattutil_config_path_t **obj)
 }
 
 EXPORTED_SYM
+void
+lattutil_config_set_aux(lattutil_config_path_t *obj, void *aux, size_t sz)
+{
+
+	if (obj == NULL) {
+		return;
+	}
+
+	obj->l_aux = aux;
+	obj->l_auxsz = sz;
+}
+
+EXPORTED_SYM
+void *
+lattutil_config_get_aux(lattutil_config_path_t *obj, size_t *sz)
+{
+
+	if (obj == NULL) {
+		return (NULL);
+	}
+
+	if (sz != NULL) {
+		*sz = obj->l_auxsz;
+	}
+
+	return (obj->l_aux);
+}
+
+EXPORTED_SYM
 uint64_t
 lattutil_config_get_version(lattutil_config_path_t *obj)
 {

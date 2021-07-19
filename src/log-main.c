@@ -143,3 +143,32 @@ lattutil_log_set_verbosity(lattutil_log_t *logp, int verbosity)
 
 	return (old);
 }
+
+EXPORTED_SYM
+void
+lattutil_log_set_aux(lattutil_log_t *logp, void *aux, size_t auxsz)
+{
+
+	if (logp == NULL) {
+		return;
+	}
+
+	logp->ll_aux = aux;
+	logp->ll_auxsz = auxsz;
+}
+
+EXPORTED_SYM
+void *
+lattutil_log_get_aux(lattutil_log_t *logp, size_t *auxsz)
+{
+
+	if (logp == NULL) {
+		return (NULL);
+	}
+
+	if (auxsz != NULL) {
+		*auxsz = logp->ll_auxsz;
+	}
+
+	return (logp->ll_aux);
+}

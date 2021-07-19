@@ -58,12 +58,16 @@ typedef struct _llconfig {
 	int			 l_fd;
 	struct ucl_parser	*l_parser;
 	const ucl_object_t	*l_rootobj;
+	void			*l_aux;
+	size_t			 l_auxsz;
 } lattutil_config_path_t;
 
 typedef struct _lllog {
 	uint64_t	 ll_version;
 	int		 ll_verbosity;
 	char		*ll_path;
+	void		*ll_aux;
+	size_t		 ll_auxsz;
 
 	log_cb		 ll_log_debug;
 	log_cb		 ll_log_err;
@@ -79,6 +83,8 @@ typedef struct _lattutil_sql_ctx {
 	char		*lsq_path;
 	uint64_t	 lsq_flags;
 	lattutil_log_t	*lsq_logger;
+	void		*lsq_aux;
+	size_t		 lsq_auxsz;
 } lattutil_sqlite_ctx_t;
 
 typedef struct _lattutil_sql_res {
@@ -126,6 +132,25 @@ lattutil_config_path_t *lattutil_find_config(const char **, size_t, const char *
  * @param A pointer to the to-be-freed object
  */
 void lattutil_free_config_path(lattutil_config_path_t **);
+
+/**
+ * Set the auxiliary members of the config context object
+ *
+ * @param The config object
+ * @param The auxiliary data
+ * @param The size of the auxiliary data
+ */
+void lattutil_config_set_aux(lattutil_config_path_t *, void *, size_t);
+
+/**
+ * Get the auxiliary members of the config context object
+ *
+ * @param The config object
+ * @param[out] Optional output variable to store the recorded size of
+ *     the auxiliary member.
+ * @return The auxiliary member
+ */
+void *lattutil_config_get_aux(lattutil_config_path_t *, size_t *);
 
 /**
  * Get the ABI version of the config path object
@@ -252,6 +277,25 @@ int lattutil_log_verbosity(lattutil_log_t *);
 int lattutil_log_set_verbosity(lattutil_log_t *, int);
 
 /**
+ * Set the auxiliary members of the logging context object
+ *
+ * @param The logging object
+ * @param The auxiliary data
+ * @param The size of the auxiliary data
+ */
+void lattutil_log_set_aux(lattutil_log_t *, void *, size_t);
+
+/**
+ * Get the auxiliary members of the logging context object
+ *
+ * @param The logging object
+ * @param[out] Optional output variable to store the recorded size of
+ *     the auxiliary member.
+ * @return The auxiliary member
+ */
+void *lattutil_log_get_aux(lattutil_log_t *, size_t *);
+
+/**
  * Create new SQLite3 context object
  *
  * @param Path to the database file
@@ -263,19 +307,38 @@ lattutil_sqlite_ctx_t *lattutil_sqlite_ctx_new(const char *, lattutil_log_t *,
     uint64_t);
 
 /**
+ * Free The SQLite3 context object
+ *
+ * @param Double pointer to the context object
+ */
+void lattutil_sqlite_ctx_free(lattutil_sqlite_ctx_t **);
+
+/**
+ * Set the auxiliary members of the sqlite context object
+ *
+ * @param The sqlite context object
+ * @param The auxiliary data
+ * @param The size of the auxiliary data
+ */
+void lattutil_sqlite_ctx_set_aux(lattutil_sqlite_ctx_t *, void *, size_t);
+
+/**
+ * Get the auxiliary members of the sqlite context object
+ *
+ * @param The sqlite context object
+ * @param[out] Optional output variable to store the recorded size of
+ *     the auxiliary member.
+ * @return The auxiliary member
+ */
+void *lattutil_sqlite_ctx_get_aux(lattutil_sqlite_ctx_t *, size_t *);
+
+/**
  * Get the ABI version number of the sqlite wrapper
  *
  * @param The lattutil sqlite context object
  * @return The ABI version number
  */
 uint64_t lattutil_sqlite_get_version(lattutil_sqlite_ctx_t *);
-
-/**
- * Free The SQLite3 context object
- *
- * @param Double pointer to the context object
- */
-void lattutil_sqlite_ctx_free(lattutil_sqlite_ctx_t **);
 
 /**
  * Prepare a new query
