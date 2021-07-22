@@ -47,10 +47,10 @@ main(int argc, char *argv[])
 
 	logp = lattutil_log_init(NULL, -1);
 
-	lattutil_log_syslog_init(logp, LOG_PID | LOG_NDELAY,
-	    LOG_USER);
+	lattutil_log_stdio_init(logp);
 
-	sqlctx = lattutil_sqlite_ctx_new("/tmp/db.sqlite3", logp, 0);
+	sqlctx = lattutil_sqlite_ctx_new("/tmp/db.sqlite3", logp,
+	    LATTUTIL_SQL_FLAG_LOG_QUERY);
 	if (sqlctx == NULL) {
 		logp->ll_log_err(logp, -1, "Unable to create sqlite3 object");
 		return (1);
