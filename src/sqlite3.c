@@ -69,6 +69,8 @@ lattutil_sqlite_ctx_new(const char *path, lattutil_log_t *logger,
 		return (NULL);
 	}
 
+	ctx->lsq_flags = flags;
+
 	return (ctx);
 }
 
@@ -92,6 +94,64 @@ lattutil_sqlite_ctx_free(lattutil_sqlite_ctx_t **ctx)
 	memset(ctxp, 0, sizeof(*ctxp));
 	free(ctxp);
 	*ctx = NULL;
+}
+
+EXPORTED_SYM
+uint64_t
+lattutil_sqlite_ctx_get_flags(lattutil_sqlite_ctx_t *ctx)
+{
+
+	if (ctx == NULL) {
+		return (0);
+	}
+
+	return (ctx->lsq_flags);
+}
+
+EXPORTED_SYM
+uint64_t
+lattutil_sqlite_ctx_set_flags(lattutil_sqlite_ctx_t *ctx, uint64_t flags)
+{
+	uint64_t old_flags;
+
+	if (ctx == NULL) {
+		return (0);
+	}
+
+	old_flags = ctx->lsq_flags;
+
+	ctx->lsq_flags = flags;
+
+	return (old_flags);
+}
+
+EXPORTED_SYM
+uint64_t
+lattutil_sqlite_ctx_set_flag(lattutil_sqlite_ctx_t *ctx, uint64_t flag)
+{
+	uint64_t old_flags;
+
+	if (ctx == NULL) {
+		return (0);
+	}
+
+	old_flags = ctx->lsq_flags;
+
+	ctx->lsq_flags |= flag;
+
+	return (old_flags);
+}
+
+EXPORTED_SYM
+uint64_t
+lattutil_sql_query_get_flags(lattutil_sqlite_query_t *query)
+{
+
+	if (query == NULL || query->lsq_sql_ctx == NULL) {
+		return (0);
+	}
+
+	return (lattutil_sqlite_ctx_get_flags(query->lsq_sql_ctx));
 }
 
 EXPORTED_SYM
@@ -181,6 +241,18 @@ lattutil_sqlite_prepare(lattutil_sqlite_ctx_t *ctx, const char *query_string)
 	query->lsq_sql_ctx = ctx;
 
 	return (query);
+}
+
+EXPORTED_SYM
+lattutil_sqlite_ctx_t *
+lattutil_sqlite_query_get_ctx(lattutil_sqlite_query_t *query)
+{
+
+	if (query == NULL) {
+		return (NULL);
+	}
+
+	return (query->lsq_sql_ctx);
 }
 
 EXPORTED_SYM
@@ -292,6 +364,15 @@ lattutil_sqlite_exec(lattutil_sqlite_query_t *query)
 	}
 
 	logger = QUERY_GETLOGGER(query);
+
+	if (QUERY_CANLOG(query) &&
+	    LATTUTIL_SQL_FLAG_ISSET(query->lsq_sql_ctx,
+	    LATTUTIL_SQL_FLAG_LOG_QUERY)) {
+		logger->ll_log_debug(logger, -1, "SQL query: %s",
+		    query->lsq_querystr);
+	} else {
+		fprintf(stderr, "[-] Not set to log queries\n");
+	}
 
 	ret = true;
 

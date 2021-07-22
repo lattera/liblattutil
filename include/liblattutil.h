@@ -44,6 +44,10 @@ typedef struct _sqlite_ctx sqlite_ctx_t;
 #define LATTUTIL_LOG_VERBOSITY_DEFAULT	1000
 #define LATTUTIL_LOG_DEFAULT_NAME	"lattutil"
 
+#define LATTUTIL_SQL_FLAG_LOG_QUERY	0x1
+
+#define	LATTUTIL_SQL_FLAG_ISSET(q, f) (((q)->lsq_flags & f) == f)
+
 typedef ssize_t (*log_cb)(struct _lllog *, int, const char *, ...);
 typedef void (*log_close)(struct _lllog *);
 
@@ -318,6 +322,40 @@ lattutil_sqlite_ctx_t *lattutil_sqlite_ctx_new(const char *, lattutil_log_t *,
 void lattutil_sqlite_ctx_free(lattutil_sqlite_ctx_t **);
 
 /**
+ * Get the flags of the SQLite3 context object
+ *
+ * @param The context object
+ * @return The flags of the context object
+ */
+uint64_t lattutil_sqlite_ctx_get_flags(lattutil_sqlite_ctx_t *);
+
+/**
+ * Return the flags of the context object associated with a query
+ *
+ * @param The query object
+ * @return The flags of the context object associtated with the query
+ */
+uint64_t lattutil_sql_query_get_flags(lattutil_sqlite_query_t *);
+
+/**
+ * Set the flags of a sqlite3 context object
+ *
+ * @param The sqlite3 context object
+ * @param The flags
+ * @return The old flags
+ */
+uint64_t lattutil_sqlite_ctx_set_flags(lattutil_sqlite_ctx_t *, uint64_t);
+
+/**
+ * Set a single flag of a sqlite3 context object
+ *
+ * @param The sqlite3 context object
+ * @param The flag
+ * @return The old flags
+ */
+uint64_t lattutil_sqlite_ctx_set_flag(lattutil_sqlite_ctx_t *, uint64_t);
+
+/**
  * Set the auxiliary members of the sqlite context object
  *
  * @param The sqlite context object
@@ -352,6 +390,9 @@ uint64_t lattutil_sqlite_get_version(lattutil_sqlite_ctx_t *);
  */
 lattutil_sqlite_query_t *lattutil_sqlite_prepare(lattutil_sqlite_ctx_t *,
     const char *);
+
+lattutil_sqlite_ctx_t *lattutil_sqlite_query_get_ctx(
+    lattutil_sqlite_query_t *);
 
 /**
  * Free a query object
