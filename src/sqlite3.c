@@ -36,6 +36,7 @@
 
 static bool _lattutil_sqlite_add_row(lattutil_sqlite_query_t *);
 static bool _lattutil_sqlite_add_column_names(lattutil_sqlite_query_t *, size_t);
+static void _lattutil_sqlite_log_query(lattutil_sqlite_query_t *);
 
 EXPORTED_SYM
 lattutil_sqlite_ctx_t *
@@ -365,14 +366,7 @@ lattutil_sqlite_exec(lattutil_sqlite_query_t *query)
 
 	logger = QUERY_GETLOGGER(query);
 
-	if (QUERY_CANLOG(query) &&
-	    LATTUTIL_SQL_FLAG_ISSET(query->lsq_sql_ctx,
-	    LATTUTIL_SQL_FLAG_LOG_QUERY)) {
-		logger->ll_log_debug(logger, -1, "SQL query: %s",
-		    query->lsq_querystr);
-	} else {
-		fprintf(stderr, "[-] Not set to log queries\n");
-	}
+	_lattutil_sqlite_log_query(query);
 
 	ret = true;
 
@@ -625,4 +619,24 @@ _lattutil_sqlite_add_column_names(lattutil_sqlite_query_t *query, size_t ncols)
 	}
 
 	return (true);
+}
+
+static void
+_lattutil_sqlite_log_query(lattutil_sqlite_query_t *query)
+{
+	lattutil_log_t *logger;
+
+	if (query == NULL) {
+		return;
+	}
+
+	logger = QUERY_GETLOGGER(query);
+
+	if (!QUERY_CANLOG(query) ||
+	    !LATTUTIL_SQL_FLAG_ISSET(query->lsq_sql_ctx,
+	    LATTUTIL_SQL_FLAG_LOG_QUERY)) {
+		return;
+	}
+
+	logger->ll_log_debug(logger, -1, "SQL query: %s", query->lsq_querystr);
 }
