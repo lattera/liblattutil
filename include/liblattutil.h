@@ -107,6 +107,7 @@ typedef struct _lattutil_sqlite_query {
 	char			*lsq_querystr;
 	lattutil_sql_res_t	 lsq_result;
 	bool			 lsq_executed;
+	uint64_t		 lsq_flags;
 } lattutil_sqlite_query_t;
 
 #ifdef __cplusplus
