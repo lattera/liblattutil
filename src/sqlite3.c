@@ -31,7 +31,6 @@
 
 #include "liblattutil.h"
 
-#define QUERY_CANLOG(q) ((q)->lsq_sql_ctx->lsq_logger != NULL)
 #define QUERY_GETLOGGER(q) ((q)->lsq_sql_ctx->lsq_logger)
 
 static bool _lattutil_sqlite_add_row(lattutil_sqlite_query_t *);
@@ -63,8 +62,17 @@ lattutil_sqlite_ctx_new(const char *path, lattutil_log_t *logger,
 	}
 
 	ctx->lsq_logger = logger;
+	if (ctx->lsq_logger == NULL) {
+		ctx->lsq_logger = lattutil_log_init(NULL, -1);
+		if (ctx->lsq_logger == NULL) {
+			free(ctx->lsq_path);
+			free(ctx);
+			return (NULL);
+		}
+	}
 
 	if (sqlite3_open(path, &(ctx->lsq_sqlctx)) != SQLITE_OK) {
+		lattutil_log_free(&(ctx->lsq_logger));
 		free(ctx->lsq_path);
 		free(ctx);
 		return (NULL);
@@ -377,19 +385,15 @@ lattutil_sqlite_exec(lattutil_sqlite_query_t *query)
 			goto end;
 		case SQLITE_ROW:
 			if (!_lattutil_sqlite_add_row(query)) {
-				if (QUERY_CANLOG(query)) {
-					logger->ll_log_err( logger, -1,
-					    "Unable to add row to sqlite object");
-				}
+				logger->ll_log_err( logger, -1,
+				    "Unable to add row to sqlite object");
 				ret = false;
 				goto end;
 			}
 			break;
 		default:
-			if (QUERY_CANLOG(query)) {
-				logger->ll_log_err(logger, -1,
-				    "Unhandled sqlite3_step result: %d", res);
-			}
+			logger->ll_log_err(logger, -1,
+			    "Unhandled sqlite3_step result: %d", res);
 			ret = false;
 			goto end;
 		}
@@ -561,28 +565,22 @@ _lattutil_sqlite_add_row(lattutil_sqlite_query_t *query)
 
 		if (colobj == NULL) {
 			ret = false;
-			if (QUERY_CANLOG(query)) {
-				logger->ll_log_err(logger, -1,
-				    "Unable to determine columnal data format");
-			}
+			logger->ll_log_err(logger, -1,
+			    "Unable to determine columnal data format");
 			goto end;
 		}
 
 		if (!ucl_array_append(rowobj, colobj)) {
 			ret = false;
-			if (QUERY_CANLOG(query)) {
-				logger->ll_log_err(logger, -1,
-				    "Unable to append column to row");
-				goto end;
-			}
+			logger->ll_log_err(logger, -1,
+			    "Unable to append column to row");
+			goto end;
 		}
 	}
 
 	if (!ucl_array_append(query->lsq_result.lsr_rows, rowobj)) {
-		if (QUERY_CANLOG(query)) {
-			logger->ll_log_err(logger, -1,
-			    "Unable to append row to rows object");
-		}
+		logger->ll_log_err(logger, -1,
+		    "Unable to append row to rows object");
 	}
 
 end:
@@ -632,8 +630,7 @@ _lattutil_sqlite_log_query(lattutil_sqlite_query_t *query)
 
 	logger = QUERY_GETLOGGER(query);
 
-	if (!QUERY_CANLOG(query) ||
-	    !LATTUTIL_SQL_FLAG_ISSET(query->lsq_sql_ctx,
+	if (!LATTUTIL_SQL_FLAG_ISSET(query->lsq_sql_ctx,
 	    LATTUTIL_SQL_FLAG_LOG_QUERY)) {
 		return;
 	}
